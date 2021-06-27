@@ -1,6 +1,6 @@
 ---
 title: 
-categories: [cp]
+categories: [Competitive Programming]
 comments: false
 ---
 
