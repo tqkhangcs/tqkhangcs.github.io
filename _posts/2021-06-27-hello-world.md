@@ -1,5 +1,5 @@
 ---
-title: 
+title: Hello World
 categories: [Competitive Programming]
 comments: false
 ---
