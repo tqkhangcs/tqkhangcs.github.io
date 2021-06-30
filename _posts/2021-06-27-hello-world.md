@@ -1,6 +1,6 @@
 ---
 title: Hello World
-categories: [Competitive Programming]
+categories: [Competitive Programming, Python]
 comments: false
 ---
 
