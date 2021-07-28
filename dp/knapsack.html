@@ -27,8 +27,7 @@
 <p>Nếu gặp phải tình trạng <code>MLE</code>. Chúng ta có thể tối ưu thành mảng một chiều bằng cách: Bởi vì chỉ có <code>f[i - 1]</code> tác động lên <code>f[i]</code>, suy ra: <code>f[j]</code> = <code>max</code>(<code>f[j]</code>, <code>f[j - w_i] + v_i</code>).</p>
 <p>Một điều cần lưu ý là rất dễ code sai :((</p>
 <pre><code class="code-line language-cpp"><div><span class="hljs-keyword">for</span> (<span class="hljs-keyword">int</span> i = <span class="hljs-number">1</span>; i &lt;= n; ++i) {
-    <span class="hljs-keyword">for</span> (<span class="hljs-keyword">int</span> l = <span class="hljs-number">0</span>; l &lt;= W - w[i]; ++l) {
-        <span class="hljs-comment">// j = l + w[i]</span>
+    <span class="hljs-keyword">for</span> (<span class="hljs-keyword">int</span> l = <span class="hljs-number">0</span>; l &lt;= W - w[i]; ++l) {        
         f[l + w[i]] = max(f[l] + v[i], f[l + w[i]]); <span class="hljs-comment">// (*)</span>
     }    
 }
