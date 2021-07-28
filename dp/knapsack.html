@@ -1,0 +1,49 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/github-markdown-css/4.0.0/github-markdown.min.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release/build/styles/default.min.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex/dist/katex.min.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/markdown-it-texmath/css/texmath.min.css">
+<link rel="stylesheet" href="file:////home/tqkhangcs/.vscode/extensions/goessner.mdmath-2.7.4/themes/default/style.css">
+
+</head>
+<body class="markdown-body">
+<h1 id="backpack-dp">Backpack DP</h1>
+<p>Trước khi nói cụ thể &quot;Backpack DP&quot; là gì? Chúng ta hãy xem xét về dạng câu hỏi sau:</p>
+<blockquote>
+<p>Tóm tắt đề bài: Có <code>n</code> món đồ và một cái balo có sức chứa là <code>W</code>, mỗi món đồ có hai giá trị là trọng lượng <code>w_i</code> và giá trị <code>v_i</code>. Yêu cầu chọn đồ vật trong số <code>n</code> đồ vật đã cho bỏ vào balo sao cho tổng giá trị của các đồ vật được chọn là lớn nhất và tổng trọng lượng của các đồ vật không quá sức chứa <code>W</code> của balo.</p>
+</blockquote>
+<p>Trong đề bài trên, mỗi đồ vật sẽ sẽ có hai trạng thái là <code>được chọn</code> hoặc <code>không được chọn</code>, tương ứng với <code>0</code> và <code>1</code> trong hệ nhị phân, nên bài toán này được gọi là <code>Cái Balo 0-1</code>.</p>
+<h2 id="b%C3%A0i-to%C3%A1n-c%C3%A1i-balo-0">Bài toán Cái Balo 0-1</h2>
+<p>Trong ví dụ, các điều kiện đã biết là món đồ thứ <code>i</code> có trọng lượng <code>w_i</code>, giá trị <code>v_i</code> và tổng sức chứa của balo là <code>W</code>.</p>
+<p>Đặt trạng thái DP là <code>f[i][j]</code> là Tổng giá trị lớn nhất mà một balo có sức chứa <code>j</code> có thể đạt được khi chỉ có thể đặt <code>i</code> món đồ đầu tiên vào balo.</p>
+<p>Chuyển trạng thái: Giả sử rằng tất cả các trạng thái của món đồ thứ <code>i - 1</code> đã được xử lý, thì đối với món đồ thứ <code>i</code>:</p>
+<p><strong>Trường hợp 1</strong>, khi nó không được bỏ vào balo suy ra sức chứa còn lại của balo không thay đổi và tổng giá trị của các đồ vật trong balo cũng không thay đổi → Suy ra Giá trị lớn nhất trong trường hợp này là <code>f[i - 1][j]</code>.</p>
+<p><strong>Trường hợp 2</strong>, khi món đồ thứ <code>i</code> được bỏ vào balo, sức chứa của balo sẽ giảm đi <code>w_i</code>, và tổng giá trị các món đồ trong balo sẽ tăng lên <code>v_i</code> → Giá trị lớn nhất trong trường hợp này là <code>f[i - 1][j - w_i] + v_i</code>.</p>
+<p><strong>Suy ra:</strong></p>
+<p><code>f[i][j]</code> = <code>max</code>(<code>f[i - 1][j]</code>,<code> f[i - 1][j - w_i] + v_i</code>)</p>
+<p>Nếu gặp phải tình trạng <code>MLE</code>. Chúng ta có thể tối ưu thành mảng một chiều bằng cách: Bởi vì chỉ có <code>f[i - 1]</code> tác động lên <code>f[i]</code>, suy ra: <code>f[j]</code> = <code>max</code>(<code>f[j]</code>, <code>f[j - w_i] + v_i</code>).</p>
+<p>Một điều cần lưu ý là rất dễ code sai :((</p>
+<pre><code class="code-line language-cpp"><div><span class="hljs-keyword">for</span> (<span class="hljs-keyword">int</span> i = <span class="hljs-number">1</span>; i &lt;= n; ++i) {
+    <span class="hljs-keyword">for</span> (<span class="hljs-keyword">int</span> l = <span class="hljs-number">0</span>; l &lt;= W - w[i]; ++l) {
+        <span class="hljs-comment">// j = l + w[i]</span>
+        f[l + w[i]] = max(f[l] + v[i], f[l + w[i]]); <span class="hljs-comment">// (*)</span>
+    }    
+}
+</div></code></pre>
+<p>(*) phía trên rút ra từ: <code>f[i][l + w[i]]</code> = <code>max</code>(<code>max</code>(<code>f[i - 1][l + w[i]]</code>, <code>f[i - 1][l] + v[i]</code>), <code>f[i][l + w[i]]</code>)</p>
+<p>Có gì sai với đoạn code này? Thứ tự liệt kê sai.</p>
+<p>Xem xét đoạn code ta thấy rằng, đối với món đồ đang xử lí thứ <code>i</code> và trạng thái hiện tại là <code>f[i][j]</code>, khi <code>j</code> &gt;= <code>w_i</code>, <code>f[i][j]</code> bị ảnh hưởng bởi <code>f[i][j - w_i]</code>.</p>
+<p>Điều này xảy ra tương đương với việc món đồ thứ <code>i</code> có thể cho vào balo nhiều lần, điều này không phù hợp với yêu cầu đề bài phía trên. Trên thực tế, đây chính xác là lời giải cho bài toán balo hoàn chỉnh.</p>
+<p>Để tránh điều này, chúng ta có thể thay đổi thứ tự liệt kê. Liệt kê từ <code>W</code> đến <code>w_i</code> để không xảy ra lỗi trên, vì <code>f[i][j]</code> luôn được cập nhật trước <code>f[i][j - w_i]</code>.</p>
+<p>Code đúng:</p>
+<pre><code class="code-line language-cpp"><div><span class="hljs-keyword">for</span> (<span class="hljs-keyword">int</span> i = <span class="hljs-number">1</span>; i &lt;= n; ++i) {
+    <span class="hljs-keyword">for</span> (<span class="hljs-keyword">int</span> l = W; l &gt;= w[i]; --l) {
+        f[l] = max(f[l], f[l - w[i]] + v[i]);
+    }
+}
+</div></code></pre>
+</body>
+</html>
